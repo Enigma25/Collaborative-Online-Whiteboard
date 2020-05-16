@@ -1,0 +1,118 @@
+<html>
+    <head>
+        <title>IIT JODHPUR</title>
+
+<script>
+  ((window.gitter = {}).chat = {}).options = {
+    room: 'canvoard/canvoard'
+  };
+</script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
+
+
+    </head>
+
+<body>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <label for = "question">Question</label>
+    <input type="text" id="question" class="question">
+    <br>
+    <label for = "time">Set Time(in seconds)</label>
+    <input type="range" id="time" value="1" class="time" min="1" max="600">
+    <br>
+    <button id = "increase">+</button>
+    <button id = "decrease">-</button>
+    <div id="options"></div>
+    <button id = "startpoll">Start Poll</button>
+    <br>
+   <div id="stats"><!-- Plotly chart will be drawn inside this DIV --></div> 
+    <script> (function(){
+           var socket = io();
+    
+            document.getElementById("increase").onclick = function()
+            {
+              var element = document.getElementById("options");
+                var option = document.createElement("input");
+                option.class = "opt"
+              option.placeholder = element.getElementsByTagName('input').length+1;
+                element.appendChild(option);
+              var br = document.createElement("br");
+              element.appendChild(br);
+            }
+            
+            
+            document.getElementById("decrease").onclick = function()
+            {
+              var options = document.getElementById("options")
+              var element = options.getElementsByTagName("input");
+              var breaks = options.getElementsByTagName("br");
+              if(element.length){
+              var lastopt = element[element.length-1];
+              var lastbr = breaks[breaks.length-1];
+              lastopt.parentNode.removeChild(lastopt);
+              lastbr.parentNode.removeChild(lastbr);
+              }
+            }
+            
+            document.getElementById("startpoll").onclick = function()
+            {
+              document.getElementById("startpoll").disabled=true;
+              var element = document.getElementById("options");
+              var opts = element.getElementsByTagName("input")
+		      var options = [];
+             for(var i = 0;i<opts.length;i++)
+               {
+                 options.push(opts[i].value);
+               }
+              var q = document.getElementById('question').value
+              var t = document.getElementById('time').value
+              var uuid = create_UUID();
+              var pollq = {'question': q,'id':uuid,'time':t,'options':options}
+              console.log(pollq);
+              data = JSON.stringify(pollq);
+              console.log(data);
+              socket.emit('pollcast',data);
+              setTimeout(clear, (t*1000), 'clear');
+             }
+            function clear()
+            {
+              document.getElementById('startpoll').disabled=false;
+            }
+            
+            
+            function create_UUID(){
+                var dt = new Date().getTime();
+                var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    var r = (dt + Math.random()*16)%16 | 0;
+                    dt = Math.floor(dt/16);
+                    return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+                });
+                return uuid;
+            }
+            
+	    socket.on('stats',function(data){
+		   // alert(data);
+		   var arr = []
+                   for(var i = 0;i<data.length;i++)
+                   {
+                     arr.push('Option'+(i+1))
+                   }
+		    var statdata = [{
+ 		    x: arr,
+                    y: data,
+                    type: 'bar'
+                    }];
+Plotly.newPlot('stats', statdata, {}, {showSendToCloud:true});
+	    }) 
+            
+            
+            })();
+            
+            
+            
+            </script>
+</body>
+
+</html>

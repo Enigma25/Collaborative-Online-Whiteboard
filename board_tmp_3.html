@@ -1,0 +1,633 @@
+<html>
+    <head>
+        <title>IIT JODHPUR</title>
+<style>
+.candiv {
+	background-color: #333399
+}
+</style>
+
+<!-- MDB STYLESHEETS -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+<!-- Bootstrap core CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+<!-- Material Design Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.6/css/mdb.min.css" rel="stylesheet">
+<!-- MDB JS FILES -->
+<!-- JQuery -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.6/js/mdb.min.js"></script>
+
+<script>
+  ((window.gitter = {}).chat = {}).options = {
+    room: 'canvoard/canvoard'
+  };
+</script>
+<script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
+
+
+    </head>
+<body>
+
+
+
+<!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-dark elegant-color">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="#">Canvoard</a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#" id="drawing-mode">Drawing Mode
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="clear-canvas" href="#">Clear Screen</a>
+      </li>
+
+      <!-- Dropdown -->
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">Insert Shapes</a>
+        <div class="dropdown-menu dropdown-elegant" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" id="shape-circle" href="#">Circle</a>
+          <a class="dropdown-item" id="shape-rectangle" href="#">Rectangle</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">Pen Type</a>
+        <div class="dropdown-menu dropdown-elegant" id="drawing-mode-options"aria-labelledby="navbarDropdownMenuLink">
+          <option class="dropdown-item" href="#">Pencil</option>
+          <option class="dropdown-item" href="#">Circle</option>
+          <option class="dropdown-item" href="#">Spray</option>
+          <option class="dropdown-item" href="#">Pattern</option>
+          <option class="dropdown-item" href="#">Hline</option>
+          <option class="dropdown-item" href="#">Vline</option>
+          <option class="dropdown-item" href="#">Square</option>
+          <option class="dropdown-item" href="#">Diamond</option>
+          <option class="dropdown-item" href="#">Texture</option>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">Properties</a>
+        <div class="dropdown-menu dropdown-elegant" aria-labelledby="navbarDropdownMenuLink">
+          <label for="drawing-line-width">Line width:</label>
+    <span class="info"></span><input type="range" min="1" max="30" id="drawing-line-width"><br>
+          
+          <label for="drawing-color">Line color:</label>
+    <input type="color" value="#ffffff" id="drawing-color"><br>
+    <label for="drawing-shadow-color">Shadow color:</label>
+
+    <input type="color" value="#005E7A" id="drawing-shadow-color"><br>
+    <label for="drawing-shadow-width">Shadow width:</label>
+    <span class="info"></span><input type="range" value="1 min="1"max="30 id="drawing-shadow-width"><br>
+
+    <label for="drawing-shadow-offset">Shadow offset:</label>
+    <span class="info"></span><input type="range" value="1 min="1" max="30 id="drawing-shadow-offset"><br>
+          
+        </div>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <form class="form-inline">
+      <div class="md-form my-0">
+        <input class="form-control mr-sm-2" id="imgurl" type="text" placeholder="Image URL" aria-label="Search">
+      </div>
+    </form>
+  </div>
+  <!-- Collapsible content -->
+
+</nav>
+<!--/.Navbar-->
+
+
+
+
+
+	<div class = "candiv">	
+<canvas id="c" style="border:1px solid #aaa" ></canvas>
+	</div>
+	<script>
+         var canvas = document.querySelector('canvas');
+	 //canvas.width = (innerWidth);
+	 //canvas.height = ((5*innerHeight)/6);
+   canvas.width = 1839;
+   canvas.height = 931;
+        </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/2.6.0/fabric.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<div style="display: inline-block; margin-left: 10px">
+  <button id="drawing-mode" class="btn btn-info">Cancel drawing mode</button><br>
+  <button id="clear-canvas" class="btn btn-info">Clear</button><br>
+  <button id="shape-rectangle" class="btn btn-info">Insert Rectangle</button><br>
+  <button id="shape-circle" class="btn btn-info">Insert Circle</button><br>
+  Image URL: <input type="text" id="urlText">
+  <button id="image" class="btn btn-info">Fetch Image</button><br>
+
+  <div id="drawing-mode-options">
+    <label for="drawing-mode-selector">Mode:</label>
+    <select id="drawing-mode-selector">
+      <option>Pencil</option>
+      <option>Circle</option>
+      <option>Spray</option>
+      <option>Pattern</option>
+      <option>hline</option>
+      <option>vline</option>
+      <option>square</option>
+      <option>diamond</option>
+      <option>texture</option>
+    </select><br>
+
+    <label for="drawing-line-width">Line width:</label>
+    <span class="info">10</span><input type="range" value="10" min="0" max="150" id="drawing-line-width"><br>
+    <label for="drawing-color">Line color:</label>
+    <input type="color" value="#ffffff" id="drawing-color"><br>
+    <label for="drawing-shadow-color">Shadow color:</label>
+
+    <input type="color" value="#005E7A" id="drawing-shadow-color"><br>
+    <label for="drawing-shadow-width">Shadow width:</label>
+    <span class="info">0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-width"><br>
+
+    <label for="drawing-shadow-offset">Shadow offset:</label>
+    <span class="info">0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-offset"><br>
+     </div>
+</div>
+
+
+<script id="main">(function() {
+   var $ = function(id){return document.getElementById(id)};
+////////////////////////////////////////////////////////////////////////  
+fabric.Canvas.prototype.getObjectById = function(id) {
+  var object = null,
+      objects = this.getObjects();
+  for (var i = 0, len = this.size(); i < len; i++) {
+    if (objects[i].id && objects[i].id === id) {
+      object = objects[i];
+      break;
+    }
+  }
+  return object;
+};
+/////////////////////////////////////////////////////////////////////////
+    var canvas = this.__canvas = new fabric.Canvas('c', {
+      isDrawingMode: true
+    });
+    function observeObjMouseUp()
+    {
+        var i = 0;
+	canvas.getObjects().forEach(function(o)
+        {
+          i = i+1;
+          o.on('mouseup',function(){});
+        });
+    }
+ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+    var socket = io();
+    fabric.Object.prototype.transparentCorners = false;
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ 
+    socket.on('server_broadcast',function(data)
+       {
+         console.log(data);
+	 console.log("Type of above DATA IS SHOWN BELOW");
+         console.log(typeof data);
+         //var canvas_modified = new fabric.Canvas();
+         // 1  var canvas_modified = new fabric.Canvas('c');
+	 //console.log("This is the modified canvas");
+         // 1  canvas_modified.loadFromJSON(data);
+         // 1  console.log(canvas_modified);
+         // 1  console.log(canvas===canvas_modified);
+         //canvas = canvas_modified;
+         //for(let i of canvas_modified.toObject())
+         //	{
+         //		canvas.add(i);
+         //	}
+         // canvas.add(canvas_modified.toObject());
+         // console.log(canvas===canvas_modified);
+//////////////////////////////////////////////////////////////////////
+  //      var objs = JSON.parse(data).objects;
+//	console.log(typeof JSON.parse(data));
+//	console.log("objects:");
+//	console.log(objs);
+//////////////////////////////////////////////////////////////////////
+        var objs = JSON.parse(data);
+        fabric.util.enlivenObjects([objs],function(objs)
+         {
+          objs.forEach(function(o)
+           {
+            console.log(o);
+            canvas.add(o);
+           });
+          canvas.renderAll();
+         });	      
+      });  
+      /////////SOCKET CLEAR BROADCAST RECEIVE///////////////////////
+      socket.on('clear_broadcast',function(data){
+        canvas.clear();
+      })
+      //////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
+  var mouse_down = false;
+ // canvas.on('mouse:down', function(options) 
+ // {
+ //  mouse_down = true;
+ //  console.log('mouse_down');
+ // });
+ // canvas.on('mouse:up', function(options) 
+ // {
+ //  if(mouse_down===true)
+ //  {
+ //    mouse_down = false;
+ //    sendUnicast();
+ //  }
+ //  console.log('now mouse is up');
+ // });
+   canvas.on('path:created',function()
+  {
+   sendUnicast(); 
+  });
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
+objectModified = function(e) {
+        var fabricObject = e.target
+        console.log("Coming in moved function right now");
+        socket.emit('object:moved', JSON.stringify(fabricObject))
+    }
+    canvas.on('object:moved', objectModified);
+    socket.on('object:moved', function(rawObject) 
+        {
+          // // TODO: This can probably be fixed in fabricjs' toObject.
+          // // Serialization issue. Remove group fill.
+          // if(rawObject.type === 'group') {
+          //     delete rawObject.fill
+          //     delete rawObject.stroke
+          // }
+	      // console.log(typeof rawObject);
+          console.log(rawObject);
+          rawObject = JSON.parse(rawObject);
+          console.log(rawObject.id);
+          var fabricObject = canvas.getObjectById(rawObject.id)
+          if(fabricObject) {
+              // Update all the properties of the fabric object.
+              fabricObject.set(rawObject)
+              canvas.renderAll()
+          } else {
+              console.warn('No object found in scene:', rawObject.id)
+          }
+        })
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+   var drawingModeEl = $('drawing-mode'),
+        drawingOptionsEl = $('drawing-mode-options'),
+        drawingColorEl = $('drawing-color'),
+        drawingShadowColorEl = $('drawing-shadow-color'),
+        drawingLineWidthEl = $('drawing-line-width'),
+        drawingShadowWidth = $('drawing-shadow-width'),
+        drawingShadowOffset = $('drawing-shadow-offset'),
+        clearEl = $('clear-canvas'),
+////////////////////////////////////////////////////////////////////////
+        rectangle = $('shape-rectangle'),
+        circle = $('shape-circle'),
+        urlText = $('urlText').value,
+        imgEl = $('image');
+///////////////////////////////////////////////////////////////////************************************//////////////////////////////////  
+    clearEl.onclick = function() { canvas.clear(); socket.emit('clear_unicast',true); };
+//////////////////////////////////////////////////////////////////***************************************//////////////////////////////
+    circle.onclick = function()
+    {
+      var index = canvas.getObjects().length+1;
+     // var index = uuidv4();
+      var circle1 = new fabric.Circle({
+      radius: 50,
+      fill: 'red',
+      left: 0,
+      id:index
+      });
+      canvas.add(circle1);
+      circle1.toObject =  (function(toObject) 
+      {
+        return function() 
+        {
+          return fabric.util.object.extend(toObject.call(this), {
+            id: this.id});
+        };
+      })(circle1.toObject);
+      sendUnicast();
+    }
+    //imgEl.onclick = addImg();
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    function addImg()
+    {
+      console.log("I Entered in addImg")
+      var Img = new Image();
+      var index = canvas.getObjects().length+1;
+      Img.src = imgurl.value;
+      Img.onload = function (img) 
+      {    
+        var imgobj = new fabric.Image(Img, {
+          angle: 0,
+          width: 500,
+          height: 500,
+          left: 50,
+          top: 70,
+          scaleX: .5,
+          scaleY: .5,
+          id:index
+          });
+        imgobj.toObject =  (function(toObject) 
+      {
+        return function() 
+        {
+          return fabric.util.object.extend(toObject.call(this), {
+            id: this.id});
+        };
+      })(imgobj.toObject);
+      canvas.add(imgobj);
+        console.log(JSON.stringify(Img));
+        sendUnicast();
+      };
+    }
+    var imgurl = document.getElementById('imgurl');
+// Execute a function when the user releases a key on the keyboard
+imgurl.addEventListener('keypress', function(event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13&&imgurl.value) {
+    // Cancel the default action, if needed
+      event.preventDefault();
+    // Trigger the button element with a click
+    addImg();
+    imgurl.value="";
+    
+  }
+}); 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+    rectangle.onclick = function()
+    {
+      var index = canvas.getObjects().length+1;
+     // var index = uuidv4();
+      var rect = new fabric.Rect({
+      left: 100,
+      top: 50,
+      width: 100,
+      height: 100,
+      fill: 'blue',
+      id: index
+      });
+      rect.toObject =  (function(toObject) 
+      {
+        return function() 
+        {
+          return fabric.util.object.extend(toObject.call(this), {
+            id: this.id});
+        };
+      })(rect.toObject);
+      canvas.add(rect);
+      console.log(index);
+      sendUnicast();
+    }
+/////////////////////////////////////////////////////////////////***********************************************//////////////////////    
+  
+    drawingModeEl.onclick = function() {
+      canvas.isDrawingMode = !canvas.isDrawingMode;
+      if (canvas.isDrawingMode) {
+        drawingModeEl.innerHTML = 'Cancel drawing mode';
+        drawingOptionsEl.style.display = '';
+      }
+      else {
+        drawingModeEl.innerHTML = 'Enter drawing mode';
+        drawingOptionsEl.style.display = 'none';
+      }
+    };
+  
+    if (fabric.PatternBrush) {
+      var vLinePatternBrush = new fabric.PatternBrush(canvas);
+      vLinePatternBrush.getPatternSrc = function() {
+  
+        var patternCanvas = fabric.document.createElement('canvas');
+        patternCanvas.width = patternCanvas.height = 10;
+        var ctx = patternCanvas.getContext('2d');
+  
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(0, 5);
+        ctx.lineTo(10, 5);
+        ctx.closePath();
+        ctx.stroke();
+  
+        return patternCanvas;
+      };
+  
+      var hLinePatternBrush = new fabric.PatternBrush(canvas);
+      hLinePatternBrush.getPatternSrc = function() {
+  
+        var patternCanvas = fabric.document.createElement('canvas');
+        patternCanvas.width = patternCanvas.height = 10;
+        var ctx = patternCanvas.getContext('2d');
+  
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(5, 0);
+        ctx.lineTo(5, 10);
+        ctx.closePath();
+        ctx.stroke();
+  
+        return patternCanvas;
+      };
+  
+      var squarePatternBrush = new fabric.PatternBrush(canvas);
+      squarePatternBrush.getPatternSrc = function() {
+  
+        var squareWidth = 10, squareDistance = 2;
+  
+        var patternCanvas = fabric.document.createElement('canvas');
+        patternCanvas.width = patternCanvas.height = squareWidth + squareDistance;
+        var ctx = patternCanvas.getContext('2d');
+  
+        ctx.fillStyle = this.color;
+        ctx.fillRect(0, 0, squareWidth, squareWidth);
+  
+        return patternCanvas;
+      };
+  
+      var diamondPatternBrush = new fabric.PatternBrush(canvas);
+      diamondPatternBrush.getPatternSrc = function() {
+  
+        var squareWidth = 10, squareDistance = 5;
+        var patternCanvas = fabric.document.createElement('canvas');
+        var rect = new fabric.Rect({
+          width: squareWidth,
+          height: squareWidth,
+          angle: 45,
+          fill: this.color
+        });
+  
+        var canvasWidth = rect.getBoundingRect().width;
+  
+        patternCanvas.width = patternCanvas.height = canvasWidth + squareDistance;
+        rect.set({ left: canvasWidth / 2, top: canvasWidth / 2 });
+  
+        var ctx = patternCanvas.getContext('2d');
+        rect.render(ctx);
+  
+        return patternCanvas;
+      };
+  
+      var img = new Image();
+      img.src = '../assets/honey_im_subtle.png';
+  
+      var texturePatternBrush = new fabric.PatternBrush(canvas);
+      texturePatternBrush.source = img;
+    }
+  
+    $('drawing-mode-selector').onchange = function() {
+  
+      if (this.value === 'hline') {
+        canvas.freeDrawingBrush = vLinePatternBrush;
+      }
+      else if (this.value === 'vline') {
+        canvas.freeDrawingBrush = hLinePatternBrush;
+      }
+      else if (this.value === 'square') {
+        canvas.freeDrawingBrush = squarePatternBrush;
+      }
+      else if (this.value === 'diamond') {
+        canvas.freeDrawingBrush = diamondPatternBrush;
+      }
+      else if (this.value === 'texture') {
+        canvas.freeDrawingBrush = texturePatternBrush;
+      }
+      else {
+        canvas.freeDrawingBrush = new fabric[this.value + 'Brush'](canvas);
+      }
+  
+      if (canvas.freeDrawingBrush) {
+        canvas.freeDrawingBrush.color = drawingColorEl.value;
+        canvas.freeDrawingBrush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
+        canvas.freeDrawingBrush.shadow = new fabric.Shadow({
+          blur: parseInt(drawingShadowWidth.value, 10) || 0,
+          offsetX: 0,
+          offsetY: 0,
+          affectStroke: true,
+          color: drawingShadowColorEl.value,
+        });
+      }
+    };
+  
+    drawingColorEl.onchange = function() {
+      canvas.freeDrawingBrush.color = this.value;
+    };
+    drawingShadowColorEl.onchange = function() {
+      canvas.freeDrawingBrush.shadow.color = this.value;
+    };
+////////////////////////////////////////////////////////////////////////////////////////////////
+    drawingLineWidthEl.onchange = function() {
+      canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 1;
+      // data = JSON.stringify(canvas);
+      //var socket = io(); // TIP: io() with no args does auto-discovery
+      // console.log(data);
+      // console.log("hello");
+      // socket.emit('client_unicast',data) // args are sent in or
+      // console.log(data);
+      sendUnicast();
+      this.previousSibling.innerHTML = this.value;
+    };
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+  function sendUnicast()
+  {
+//////////////////////////////////////////////////////////////////////////////
+     // data = JSON.stringify(canvas);
+      //var socket = io(); // TIP: io() with no args does auto-discovery
+     // console.log((JSON.parse(data)["objects"]).length);
+     // console.log("hello");
+     // socket.emit('client_unicast',data) // args are sent in or
+     // console.log(data);
+ ////////////////////////////////////////////////////////////////////////////
+      data = JSON.stringify(canvas.item(canvas.size()-1));
+     // data = canvas.item(canvas.size()-1).toJSON();
+      console.log(data);
+      socket.emit('client_unicast',data);
+  }
+//////////////////////////////////////////////////////////////////////////////////////////////
+    drawingShadowWidth.onchange = function() {
+      canvas.freeDrawingBrush.shadow.blur = parseInt(this.value, 10) || 0;
+      this.previousSibling.innerHTML = this.value;
+    };
+    drawingShadowOffset.onchange = function() {
+      canvas.freeDrawingBrush.shadow.offsetX = parseInt(this.value, 10) || 0;
+      canvas.freeDrawingBrush.shadow.offsetY = parseInt(this.value, 10) || 0;
+      this.previousSibling.innerHTML = this.value;
+    };
+  
+    if (canvas.freeDrawingBrush) {
+      canvas.freeDrawingBrush.color = drawingColorEl.value;
+      canvas.freeDrawingBrush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
+    //   
+    }
+function zoomIt(factor) {
+// canvas.setHeight(canvas.getHeight() * factor);
+// canvas.setWidth(canvas.getWidth() * factor);
+canvas.setHeight(929 * factor);
+canvas.setWidth(1839 * factor);
+if (canvas.backgroundImage) {
+    // Need to scale background images as well
+    var bi = canvas.backgroundImage;
+    bi.width = bi.width * factor; bi.height = bi.height * factor;
+}
+var objects = canvas.getObjects();
+for (var i in objects) {
+    var scaleX = objects[i].scaleX;
+    var scaleY = objects[i].scaleY;
+    var left = objects[i].left;
+    var top = objects[i].top;
+    var tempScaleX = scaleX * factor;
+    var tempScaleY = scaleY * factor;
+    var tempLeft = left * factor;
+    var tempTop = top * factor;
+    objects[i].scaleX = tempScaleX;
+    objects[i].scaleY = tempScaleY;
+    objects[i].left = tempLeft;
+    objects[i].top = tempTop;
+    objects[i].setCoords();
+}
+canvas.renderAll();
+canvas.calcOffset();
+}
+//resizeCanvas();
+document.getElementsByTagName('BODY')[0].onresize = resizeCanvas;
+function resizeCanvas()
+{
+    var factor = Math.max(innerWidth,innerHeight)/1839;
+    zoomIt(factor);
+}
+  })();
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  </script>
+
+</body>
+</html>
+
+
